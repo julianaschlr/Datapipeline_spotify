@@ -9,7 +9,7 @@ import sqlite3
 
 DATABASE_LOCATION= "sqllite:////Users/julianaschuler/Library/CloudStorage/OneDrive-Persönlich/Privat/Python/spotify_pipeline.db"
 USER_ID= "thejulles"
-TOKEN= "BQACKUeD2hY4CgjAYBoviBAPdpIWJgWQ4WQTJ1sRXZsEz8MxEU6hScQ68zqrshJXhsv-NkefgDg4xlpbYO-deWjCvn4K22mI6GaUj7MjwoAwV2E5pftFHGO8LUfrAYwtrD1pCb6ROq_1Gmg-coJkPBWu0h_uCMwvPYQKS8wcToNSepg"
+TOKEN= "BQBB_vh7dpFCSqh7a3Oi93H0fm-LdEZ3bcxrJUgi_6WuEWZ57jX15rM1AvD3jy8smfiFwRWYJHPK3ZdaQO6uDjBj8VmnLvc7qsfTUBR8ssoZsonba6gqtlO6fsAdhs3gKK4PEYnAbdjceEv6Kwj5Gw6ZtZ6rIYdwjCPzj8-hKf9TRfQ"
 
 if __name__ == "__main__":
 
@@ -34,19 +34,19 @@ if __name__ == "__main__":
     played_at_list = []
     timestamps = []
 
-    for song in data['items']:
-        song_names.append(song['track']['name'])
-        artist_names.append(song['track']['album']['artists'[0]]['name'])
-        played_at_list.append(song['played_at'])
-        timestamps.append(song['played_at'][0:10])
+    for song in data["items"]:
+        song_names.append(song["track"]["name"])
+        artist_names.append(song["track"]["album"]["artists"][0]["name"])
+        played_at_list.append(song["played_at"])
+        timestamps.append(song["played_at"][0:10])
 
     song_dict = {
         "song_name" : song_names,
         "artist_name" : artist_names,
         "played_at_list" : played_at_list,
-        "timestamps" : timestamps
+        "timestamp" : timestamps
     }
 
-    song_df = pd.DataFrame(song_dict, columns=["song_name", "artist_name", "played_at", "timestamp"])
+    song_df = pd.DataFrame(song_dict, columns=["song_name", "artist_name", "played_at_list", "timestamp"])
 
     print(song_df)
