@@ -7,9 +7,9 @@ from datetime import datetime
 import datetime
 import sqlite3
 
-DATABASE_LOCATION= "sqllite:////Users/julianaschuler/Library/CloudStorage/OneDrive-Persönlich/Privat/Python/spotify_pipeline.db"
+DATABASE_LOCATION= "sqlite:///my_played_tracks.sqlite"
 USER_ID= "thejulles"
-TOKEN= "BQASLTBiRDXIrStflRUjBMRLLlNE-ei4rbV-1OWsFeEKaj33qFnd0owYPfMfdZ33nhyYtpoKYYx5RxnQU_GjMyuXOxs5abyDnJkMD97p83Jh6ovNTOSmzAC0_W3OBN9JsVXI7VL6O_FXxhXiPSXpvQZjEvtG9um_qps0lSqA8xkaoU8"
+TOKEN= "BQAQOdpX5mHK2ACcDuZwpZaGxKF0IDbBgOimqcmjV70n11go_kRbb7iJYJCdjPeslY0OXyggB6tJLKO1xZ6pW8hzKQG4EDUPNPzpheLZI_ijKhaChC2oJpYMtJn9MkMbfl4Mx0Y4MCchKAUn_Wkdimc55FKOsBexrcQ8devzhIln2OI"
 
 # Generate your TOKEN here: https://developer.spotify.com/console/get-recently-played/?limit=&after=&before=
 # Note: You need a spotify account
@@ -75,11 +75,11 @@ if __name__ == "__main__":
     song_dict = {
         "song_name": song_names,
         "artist_name": artist_names,
-        "played_at_list": played_at_list,
+        "played_at": played_at_list,
         "timestamp": timestamps
     }
 
-    song_df = pd.DataFrame(song_dict, columns=["song_name", "artist_name", "played_at_list", "timestamp"])
+    song_df = pd.DataFrame(song_dict, columns=["song_name", "artist_name", "played_at", "timestamp"])
 
     # Validate
     if check_if_valid_data(song_df):
@@ -89,16 +89,24 @@ if __name__ == "__main__":
 
     engine = sqlalchemy.create_engine(DATABASE_LOCATION)
     conn = sqlite3.connect("spotify_pipeline.sqlite")
-    conn = conn.cursor()
+    c = conn.cursor()
+
 
     sql_query = """
     CREATE TABLE IF NOT EXISTS my_played_tracks(
         song_name VARCHAR(200),
         artist_name VARCHAR(200),
-        played_at_list VARCHAR(200),
+        played_at VARCHAR(200),
         timestamp VARCHAR(200),
         CONSTRAINT primary_key_constraint PRIMARY KEY (played_at)
         )
     """
 
-    conn.execute(sql_query)
+    c.execute(sql_query)
+    try:
+        song_df.to_sql("my_played_tracks", engine, index=False, if_exists ="fail")
+    except ValueError:
+        print("Data already exists in the Database")
+
+    c.close()
+    print("Closed successfully")
